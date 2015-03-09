@@ -79,11 +79,13 @@
     
     if (!shouldBatch && queueCount == 0) {
         
+        __weak TEALDispatchManager *weakSelf = self;
+        
         [self attemptDispatch:aDispatch
               completionBlock:^(TEALDispatchStatus status, TEALDispatch *dispatch, NSError *error) {
 
                   if (status != TEALDispatchStatusSent) {
-                      [self enqueueDispatch:dispatch completionBlock:completionBlock];
+                      [weakSelf enqueueDispatch:dispatch completionBlock:completionBlock];
                   } else if (completionBlock) {
                       completionBlock(status, dispatch, error);
                   }
@@ -163,28 +165,6 @@
     
     if ([self.delegate shouldAttemptDispatch]) {
 
-//        NSUInteger count = [self queuedDispatchCount];
-//        
-//        BOOL shouldContinue = (count);
-//
-//        if (shouldContinue) {
-//            
-//            [self.delegate willRunDispatchQueueWithCount:count];
-//        }
-//        
-//        while (shouldContinue) {
-//            
-//            TEALDispatch *dispatch = [self.queuedDispatches dequeueObject];
-//            
-//            if ([self attemptDispatch:dispatch completionBlock:nil]) {
-//
-//                shouldContinue = ( [self queuedDispatchCount] && [self.delegate shouldAttemptDispatch] );
-//            } else {
-//                [self requeueDispatch:dispatch];
-//                shouldContinue = NO;
-//            }
-//        }
-        
         [self beginQueueTraversal];
         
         [self recusivelyDispatchWithCompletion:^{
@@ -216,13 +196,14 @@
         return;
     }
 
+    __weak TEALDispatchManager *weakSelf = self;
     
     TEALDispatchBlock dispatchCompletion = ^(TEALDispatchStatus status, TEALDispatch *resultDispatch, NSError *error) {
         
         if (status == TEALDispatchStatusSent) {
-            [self recusivelyDispatchWithCompletion:completion];
+            [weakSelf recusivelyDispatchWithCompletion:completion];
         } else {
-            [self requeueDispatch:dispatch];
+            [weakSelf requeueDispatch:dispatch];
             if (completion) {
                 completion();
             }
@@ -245,12 +226,14 @@
     
     if ([self.delegate shouldAttemptDispatch]) {
 
+        __weak TEALDispatchManager *weakSelf = self;
+        
         [self.delegate dispatchManager:self
                       requestsDispatch:aDispatch
                        completionBlock:^(TEALDispatchStatus status, TEALDispatch *dispatch, NSError *error) {
                            
                            if (status == TEALDispatchStatusSent) {
-                               [self enqueueSentDispatch:dispatch];
+                               [weakSelf enqueueSentDispatch:dispatch];
                            }
                            if (completionBlock) {
                                completionBlock(status, dispatch, error);
