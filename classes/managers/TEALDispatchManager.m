@@ -117,7 +117,7 @@
     
     [self.delegate didEnqueueDispatch:dispatch];
     
-    if (completionBlock){
+    if (completionBlock) {
         completionBlock(TEALDispatchStatusQueued, dispatch, nil);
     }
 }
@@ -239,7 +239,7 @@
                                completionBlock(status, dispatch, error);
                            }
                        }];
-    } else {
+    } else if (completionBlock) {
         completionBlock(TEALDispatchStatusFailed, aDispatch, nil);
     }
 }
