@@ -26,7 +26,7 @@
 
 + (instancetype) managerWithDelegate:(id<TEALDispatchManagerDelegate>)delegate {
 
-    return [[[self class] alloc] initWithDelegate:delegate];
+    return [[TEALDispatchManager alloc] initWithDelegate:delegate];
 }
 
 - (instancetype) initWithDelegate:(id<TEALDispatchManagerDelegate>)delegate {
