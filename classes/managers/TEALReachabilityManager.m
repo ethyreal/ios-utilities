@@ -25,11 +25,11 @@
  POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "TEALReachability.h"
+#import "TEALReachabilityManager.h"
 
 NSString *const kTealiumReachabilityChangedNotification = @"kReachabilityChangedNotification";
 
-@interface TEALReachability (private)
+@interface TEALReachabilityManager (private)
 
 -(void)reachabilityChanged:(SCNetworkReachabilityFlags)flags;
 -(BOOL)setReachabilityTarget:(NSString*)hostname;
@@ -60,7 +60,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 {
 #pragma unused (target)
     
-    TEALReachability *reachability = ((__bridge TEALReachability*)info);
+    TEALReachabilityManager *reachability = ((__bridge TEALReachabilityManager*)info);
     
     // we probably dont need an autoreleasepool here as GCD docs state each queue has its own autorelease pool
     // but what the heck eh?
@@ -71,7 +71,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 }
 
 
-@implementation TEALReachability
+@implementation TEALReachabilityManager
 
 @synthesize reachabilityRef;
 @synthesize reachabilitySerialQueue;
