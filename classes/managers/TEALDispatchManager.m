@@ -216,10 +216,10 @@
 
 - (void) endQueueTraversal {
     
-    if (self.traversingQueue) {
-
-        self.traversingQueue = NO;
-    }
+    self.traversingQueue = NO;
+    
+    NSUInteger count = [self queuedDispatchCount];
+    [self.delegate didRunDispatchQueueWithCount:count];
 }
 
 - (void) attemptDispatch:(TEALDispatch *)aDispatch completionBlock:(TEALDispatchBlock)completionBlock {
