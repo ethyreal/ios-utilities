@@ -16,19 +16,21 @@
     
     NSMutableDictionary *cleanedDict = [NSMutableDictionary dictionary];
     
-    NSArray *allKeys = [self allKeys];
-    for (unsigned int i = 0; i < [allKeys count]; i++){
-        id key = allKeys[i];
-        id obj = self[key];
-        
-        NSString *newKey = [key teal_stringValue];
-        
-        if ([obj isKindOfClass:[NSArray class]]) {
-            NSArray *ar = (NSArray *)obj;
-            cleanedDict[newKey] = [ar teal_stringifiedArray];
-        } else {
-
-            cleanedDict[newKey] = [obj teal_stringValue];
+    @autoreleasepool {
+        NSArray *allKeys = [self allKeys];
+        for (unsigned int i = 0; i < [allKeys count]; i++){
+            id key = allKeys[i];
+            id obj = self[key];
+            
+            NSString *newKey = [key teal_stringValue];
+            
+            if ([obj isKindOfClass:[NSArray class]]) {
+                NSArray *ar = (NSArray *)obj;
+                cleanedDict[newKey] = [ar teal_stringifiedArray];
+            } else {
+                
+                cleanedDict[newKey] = [obj teal_stringValue];
+            }
         }
     }
 
@@ -40,13 +42,15 @@
 
     NSMutableArray *sortedArray = [NSMutableArray array];
     
-    NSArray *keys = [self allKeys];
-    NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    
-    for (NSString *key in sortedKeys) {
-        id object = self[key];
-        NSString *string = [NSString stringWithFormat:@"%@ = %@", key, object];
-        [sortedArray addObject:string];
+    @autoreleasepool {
+        NSArray *keys = [self allKeys];
+        NSArray *sortedKeys = [keys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        
+        for (NSString *key in sortedKeys) {
+            id object = self[key];
+            NSString *string = [NSString stringWithFormat:@"%@ = %@", key, object];
+            [sortedArray addObject:string];
+        }
     }
     
     return [NSArray arrayWithArray:sortedArray];

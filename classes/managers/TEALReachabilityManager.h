@@ -52,14 +52,14 @@
 
 extern NSString *const kTEALReachabilityChangedNotification;
 
-@class TEALReachability;
+@class TEALReachabilityManager;
 
-typedef void (^TEALReachabilityBlock)(TEALReachability *reachability);
+typedef void (^TEALReachabilityBlock)(TEALReachabilityManager *reachability);
 
 /*
  ARC-Compliant version of the original non-arc complaint reachability class provided by Apple at: "http://developer.apple.com/library/ios/#samplecode/Reachability/Introduction/Intro.html". 
  */
-@interface TEALReachability : NSObject
+@interface TEALReachabilityManager : NSObject
 
 @property (nonatomic, copy) TEALReachabilityBlock reachableBlock;
 @property (nonatomic, copy) TEALReachabilityBlock unreachableBlock;

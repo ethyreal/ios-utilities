@@ -35,6 +35,7 @@
 - (BOOL) hasDispatchExpired:(TEALDispatch *)dispatch;
 
 - (void) willRunDispatchQueueWithCount:(NSUInteger)count;
+- (void) didRunDispatchQueueWithCount:(NSUInteger)count;
 
 @end
 
