@@ -177,14 +177,20 @@
 
 - (BOOL) beginQueueTraversal {
 
-    if (!self.processingQueue && [self queuedDispatchCount]) {
+    NSUInteger queueCount = [self queuedDispatchCount];
+    if (!self.processingQueue && queueCount) {
 
-        self.processingQueue = [self.queuedDispatches copy];
-        NSUInteger count = [self.processingQueue count];
+        self.processingQueue = [TEALDataQueue new];
 
-        [self.queuedDispatches dequeueAllObjects];
-            
-        [self.delegate willRunDispatchQueueWithCount:count];
+        [self.queuedDispatches dequeueNumberOfObjects:queueCount
+                                            withBlock:^(id dequeuedObject) {
+                                                
+                                                [self.processingQueue enqueueObject:dequeuedObject];
+                                            }];
+        
+        NSUInteger processingCount = [self.processingQueue count];
+
+        [self.delegate willRunDispatchQueueWithCount:processingCount];
             
         return YES;
     }
