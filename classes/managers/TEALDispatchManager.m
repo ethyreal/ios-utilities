@@ -15,6 +15,7 @@
 
 @property (strong, nonatomic) TEALDataQueue *sentDispatches;
 @property (strong, nonatomic) TEALDataQueue *queuedDispatches;
+@property (strong, nonatomic) TEALDataQueue *processingQueue;
 
 @property (weak, nonatomic) id<TEALDispatchManagerDelegate> delegate;
 
@@ -165,31 +166,43 @@
     
     if ([self.delegate shouldAttemptDispatch]) {
 
-        [self beginQueueTraversal];
-        
-        [self recusivelyDispatchWithCompletion:^{
-            
-            [self endQueueTraversal];
-        }];
+        if ([self beginQueueTraversal]) {
+            [self recusivelyDispatchWithCompletion:^{
+                
+                [self endQueueTraversal];
+            }];
+        }
     }
 }
 
-- (void) beginQueueTraversal {
+- (BOOL) beginQueueTraversal {
 
-    if (!self.traversingQueue) {
+    if (!self.processingQueue && [self queuedDispatchCount]) {
 
-        NSUInteger count = [self queuedDispatchCount];
+        self.processingQueue = [self.queuedDispatches copy];
+        NSUInteger count = [self.processingQueue count];
+
+        [self.queuedDispatches dequeueAllObjects];
+            
         [self.delegate willRunDispatchQueueWithCount:count];
-        
-        self.traversingQueue = YES;
+            
+        return YES;
     }
+    return NO;
 }
 
 - (void) recusivelyDispatchWithCompletion:(TEALVoidBlock)completion {
+
+    if (!self.processingQueue) {
+        if (completion) {
+            completion();
+        }
+        return;
+    }
     
-    TEALDispatch *dispatch = [self.queuedDispatches dequeueObject];
+    TEALDispatch *dispatch = [self.processingQueue dequeueObject];
     
-    if (!dispatch || !self.traversingQueue) {
+    if (!dispatch) {
         if (completion) {
             completion();
         }
@@ -215,11 +228,21 @@
 }
 
 - (void) endQueueTraversal {
-    
-    self.traversingQueue = NO;
-    
-    NSUInteger count = [self queuedDispatchCount];
-    [self.delegate didRunDispatchQueueWithCount:count];
+
+    if (self.processingQueue) {
+        NSUInteger count = [self.processingQueue count];
+        [self.delegate didRunDispatchQueueWithCount:count];
+        
+        if (count) {
+
+            [self.processingQueue dequeueNumberOfObjects:count
+                                               withBlock:^(id dequeuedObject) {
+                                                   
+                                                   [self.queuedDispatches enqueueObjectToFirstPosition:dequeuedObject];
+                                               }];
+        }
+    }
+    self.processingQueue = nil;
 }
 
 - (void) attemptDispatch:(TEALDispatch *)aDispatch completionBlock:(TEALDispatchBlock)completionBlock {
