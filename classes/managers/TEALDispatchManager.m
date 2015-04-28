@@ -19,8 +19,6 @@
 
 @property (weak, nonatomic) id<TEALDispatchManagerDelegate> delegate;
 
-@property BOOL traversingQueue;
-
 @end
 
 @implementation TEALDispatchManager
@@ -44,7 +42,7 @@
 
         _sentDispatches = [TEALDataQueue queueWithCapacity:12];
         
-        _traversingQueue = NO;
+        _processingQueue = nil;
     }
     return self;
 }
@@ -180,12 +178,14 @@
     NSUInteger queueCount = [self queuedDispatchCount];
     if (!self.processingQueue && queueCount) {
 
-        self.processingQueue = [TEALDataQueue new];
+        self.processingQueue = [TEALDataQueue queueWithCapacity:queueCount];
 
+        __weak TEALDispatchManager *weakSelf = self;
+        
         [self.queuedDispatches dequeueNumberOfObjects:queueCount
                                             withBlock:^(id dequeuedObject) {
                                                 
-                                                [self.processingQueue enqueueObject:dequeuedObject];
+                                                [weakSelf.processingQueue enqueueObject:dequeuedObject];
                                             }];
         
         NSUInteger processingCount = [self.processingQueue count];
@@ -222,7 +222,10 @@
         if (status == TEALDispatchStatusSent) {
             [weakSelf recusivelyDispatchWithCompletion:completion];
         } else {
-            [weakSelf requeueDispatch:dispatch];
+            
+            if (weakSelf.processingQueue) {
+                [weakSelf.processingQueue enqueueObjectToFirstPosition:dispatch];
+            }
             if (completion) {
                 completion();
             }
@@ -237,16 +240,20 @@
 
     if (self.processingQueue) {
         NSUInteger count = [self.processingQueue count];
-        [self.delegate didRunDispatchQueueWithCount:count];
         
         if (count) {
 
+            __weak TEALDispatchManager *weakSelf = self;
+            
             [self.processingQueue dequeueNumberOfObjects:count
                                                withBlock:^(id dequeuedObject) {
                                                    
-                                                   [self.queuedDispatches enqueueObjectToFirstPosition:dequeuedObject];
+                                                   [weakSelf.queuedDispatches enqueueObjectToFirstPosition:dequeuedObject];
                                                }];
         }
+
+        NSUInteger remainingCount = [self.queuedDispatches count];
+        [self.delegate didRunDispatchQueueWithCount:remainingCount];
     }
     self.processingQueue = nil;
 }
