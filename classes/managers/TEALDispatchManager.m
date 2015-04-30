@@ -165,7 +165,7 @@
     if ([self.delegate shouldAttemptDispatch]) {
 
         if ([self beginQueueTraversal]) {
-            [self recusivelyDispatchWithCompletion:^{
+            [self recursivelyDispatchWithCompletion:^{
                 
                 [self endQueueTraversal];
             }];
@@ -197,7 +197,7 @@
     return NO;
 }
 
-- (void) recusivelyDispatchWithCompletion:(TEALVoidBlock)completion {
+- (void) recursivelyDispatchWithCompletion:(TEALVoidBlock)completion {
 
     if (!self.processingQueue) {
         if (completion) {
@@ -220,7 +220,7 @@
     TEALDispatchBlock dispatchCompletion = ^(TEALDispatchStatus status, TEALDispatch *resultDispatch, NSError *error) {
         
         if (status == TEALDispatchStatusSent) {
-            [weakSelf recusivelyDispatchWithCompletion:completion];
+            [weakSelf recursivelyDispatchWithCompletion:completion];
         } else {
             
             if (weakSelf.processingQueue) {
