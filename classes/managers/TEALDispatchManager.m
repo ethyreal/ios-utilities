@@ -15,10 +15,9 @@
 
 @property (strong, nonatomic) TEALDataQueue *sentDispatches;
 @property (strong, nonatomic) TEALDataQueue *queuedDispatches;
+@property (strong, nonatomic) TEALDataQueue *processingQueue;
 
 @property (weak, nonatomic) id<TEALDispatchManagerDelegate> delegate;
-
-@property BOOL traversingQueue;
 
 @end
 
@@ -43,7 +42,7 @@
 
         _sentDispatches = [TEALDataQueue queueWithCapacity:12];
         
-        _traversingQueue = NO;
+        _processingQueue = nil;
     }
     return self;
 }
@@ -165,31 +164,51 @@
     
     if ([self.delegate shouldAttemptDispatch]) {
 
-        [self beginQueueTraversal];
+        if ([self beginQueueTraversal]) {
+            [self recursivelyDispatchWithCompletion:^{
+                
+                [self endQueueTraversal];
+            }];
+        }
+    }
+}
+
+- (BOOL) beginQueueTraversal {
+
+    NSUInteger queueCount = [self queuedDispatchCount];
+    if (!self.processingQueue && queueCount) {
+
+        self.processingQueue = [TEALDataQueue queueWithCapacity:queueCount];
+
+        __weak TEALDispatchManager *weakSelf = self;
         
-        [self recusivelyDispatchWithCompletion:^{
+        [self.queuedDispatches dequeueNumberOfObjects:queueCount
+                                            withBlock:^(id dequeuedObject) {
+                                                
+                                                [weakSelf.processingQueue enqueueObject:dequeuedObject];
+                                            }];
+        
+        NSUInteger processingCount = [self.processingQueue count];
+
+        [self.delegate willRunDispatchQueueWithCount:processingCount];
             
-            [self endQueueTraversal];
-        }];
+        return YES;
     }
+    return NO;
 }
 
-- (void) beginQueueTraversal {
+- (void) recursivelyDispatchWithCompletion:(TEALVoidBlock)completion {
 
-    if (!self.traversingQueue) {
-
-        NSUInteger count = [self queuedDispatchCount];
-        [self.delegate willRunDispatchQueueWithCount:count];
-        
-        self.traversingQueue = YES;
+    if (!self.processingQueue) {
+        if (completion) {
+            completion();
+        }
+        return;
     }
-}
-
-- (void) recusivelyDispatchWithCompletion:(TEALVoidBlock)completion {
     
-    TEALDispatch *dispatch = [self.queuedDispatches dequeueObject];
+    TEALDispatch *dispatch = [self.processingQueue dequeueObject];
     
-    if (!dispatch || !self.traversingQueue) {
+    if (!dispatch) {
         if (completion) {
             completion();
         }
@@ -201,9 +220,12 @@
     TEALDispatchBlock dispatchCompletion = ^(TEALDispatchStatus status, TEALDispatch *resultDispatch, NSError *error) {
         
         if (status == TEALDispatchStatusSent) {
-            [weakSelf recusivelyDispatchWithCompletion:completion];
+            [weakSelf recursivelyDispatchWithCompletion:completion];
         } else {
-            [weakSelf requeueDispatch:dispatch];
+            
+            if (weakSelf.processingQueue) {
+                [weakSelf.processingQueue enqueueObjectToFirstPosition:dispatch];
+            }
             if (completion) {
                 completion();
             }
@@ -215,11 +237,25 @@
 }
 
 - (void) endQueueTraversal {
-    
-    self.traversingQueue = NO;
-    
-    NSUInteger count = [self queuedDispatchCount];
-    [self.delegate didRunDispatchQueueWithCount:count];
+
+    if (self.processingQueue) {
+        NSUInteger count = [self.processingQueue count];
+        
+        if (count) {
+
+            __weak TEALDispatchManager *weakSelf = self;
+            
+            [self.processingQueue dequeueNumberOfObjects:count
+                                               withBlock:^(id dequeuedObject) {
+                                                   
+                                                   [weakSelf.queuedDispatches enqueueObjectToFirstPosition:dequeuedObject];
+                                               }];
+        }
+
+        NSUInteger remainingCount = [self.queuedDispatches count];
+        [self.delegate didRunDispatchQueueWithCount:remainingCount];
+    }
+    self.processingQueue = nil;
 }
 
 - (void) attemptDispatch:(TEALDispatch *)aDispatch completionBlock:(TEALDispatchBlock)completionBlock {
