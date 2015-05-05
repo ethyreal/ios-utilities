@@ -122,6 +122,7 @@
         return [self.dataQueue subarrayWithRange:NSMakeRange(0, numberOfItems)];
     }
 }
+
 - (void) updateCapacity:(NSUInteger)capacity {
     
     if (self.capacity == capacity) {
