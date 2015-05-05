@@ -18,9 +18,9 @@ These public classes are for Tealium clients and prospects to quickly and more c
 ###Cocoapods Integration###
 In your project's *podfile*, add the following line:
    
-   ```Objective-C
-        pod 'TealiumUtilities'
-    ```
+```Objective-C
+    pod 'TealiumUtilities'
+```
 
 Then run *pod update* to update your dependencies.
 
