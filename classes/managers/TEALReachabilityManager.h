@@ -27,91 +27,74 @@
 
  /* 
 
-  TealiumiOSReachability is a modification of the original code from: https://github.com/tonymillion/Reachability
+  TEALReachabilityManager is a modification of the original code from: https://github.com/tonymillion/Reachability
 
   */
 
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-#import <sys/socket.h>
-#import <netinet/in.h>
-#import <netinet6/in6.h>
-#import <arpa/inet.h>
-#import <ifaddrs.h>
-#import <netdb.h>
-
-//#import "TealiumInternalConstants.h"
-
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000 // iOS 6.0 or later
-#define NEEDS_DISPATCH_RETAIN_RELEASE 0
-#else                                         // iOS 5.X or earlier
-#define NEEDS_DISPATCH_RETAIN_RELEASE 1
+/**
+ * Create NS_ENUM macro if it does not exist on the targeted version of iOS or OS X.
+ *
+ * @see http://nshipster.com/ns_enum-ns_options/
+ **/
+#ifndef NS_ENUM
+#define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif
 
-extern NSString *const kTEALReachabilityChangedNotification;
+extern NSString *const kReachabilityChangedNotification;
+
+typedef NS_ENUM(NSInteger, TEALNetworkStatus) {
+    // Apple NetworkStatus Compatible Names.
+    TEALNetworkStatusNotReachable = 0,
+    TEALNetworkStatusReachableViaWiFi = 2,
+    TEALNetworkStatusReachableViaWWAN = 1
+};
 
 @class TEALReachabilityManager;
 
-typedef void (^TEALReachabilityBlock)(TEALReachabilityManager *reachability);
+typedef void (^NetworkReachable)(TEALReachabilityManager * reachability);
+typedef void (^NetworkUnreachable)(TEALReachabilityManager * reachability);
 
-/*
- ARC-Compliant version of the original non-arc complaint reachability class provided by Apple at: "http://developer.apple.com/library/ios/#samplecode/Reachability/Introduction/Intro.html". 
- */
+
 @interface TEALReachabilityManager : NSObject
 
-@property (nonatomic, copy) TEALReachabilityBlock reachableBlock;
-@property (nonatomic, copy) TEALReachabilityBlock unreachableBlock;
-
-@property (nonatomic, assign) SCNetworkReachabilityRef reachabilityRef;
-
-#if NEEDS_DISPATCH_RETAIN_RELEASE
-@property (nonatomic, assign) dispatch_queue_t reachabilitySerialQueue;
-@property (nonatomic, retain) id reachabilityObject;
-
-#else
-@property (nonatomic, strong) dispatch_queue_t reachabilitySerialQueue;
-@property (nonatomic, strong) id reachabilityObject;
-
-#endif
+@property (nonatomic, copy) NetworkReachable    reachableBlock;
+@property (nonatomic, copy) NetworkUnreachable  unreachableBlock;
 
 @property (nonatomic, assign) BOOL reachableOnWWAN;
 
 
-+ (instancetype) reachabilityWithHostname:(NSString *)hostname;
-+ (instancetype) reachabilityForInternetConnection;
-+ (instancetype) reachabilityWithAddress:(const struct sockaddr_in *)hostAddress;
-+ (instancetype) reachabilityForLocalWiFi;
++(instancetype)reachabilityWithHostname:(NSString*)hostname;
+// This is identical to the function above, but is here to maintain
+//compatibility with Apples original code. (see .m)
++(instancetype)reachabilityWithHostName:(NSString*)hostname;
++(instancetype)reachabilityForInternetConnection;
++(instancetype)reachabilityWithAddress:(void *)hostAddress;
++(instancetype)reachabilityForLocalWiFi;
 
-- (instancetype) initWithReachabilityRef:(SCNetworkReachabilityRef)ref;
+-(instancetype)initWithReachabilityRef:(SCNetworkReachabilityRef)ref;
 
-/*
- Notifier.
- 
- @warning NOTE: this uses GCD to trigger the blocks - they *WILL NOT* be called on THE MAIN THREAD - In other words DO NOT DO ANY UI UPDATES IN THE BLOCKS. INSTEAD USE dispatch_async(dispatch_get_main_queue(), ^{UISTUFF}) (or dispatch_sync if you want)
- */
-- (BOOL) startNotifier;
-- (void) stopNotifier;
+-(BOOL)startNotifier;
+-(void)stopNotifier;
 
-- (BOOL) isReachable;
-- (BOOL) isReachableViaWWAN;
-- (BOOL) isReachableViaWiFi;
+-(BOOL)isReachable;
+-(BOOL)isReachableViaWWAN;
+-(BOOL)isReachableViaWiFi;
 
 // WWAN may be available, but not active until a connection has been established.
 // WiFi may require a connection for VPN on Demand.
-- (BOOL) isConnectionRequired; // Identical DDG variant.
-- (BOOL) connectionRequired; // Apple's routine.
-
+-(BOOL)isConnectionRequired; // Identical DDG variant.
+-(BOOL)connectionRequired; // Apple's routine.
 // Dynamic, on demand connection?
-- (BOOL) isConnectionOnDemand;
-
+-(BOOL)isConnectionOnDemand;
 // Is user intervention required?
-- (BOOL) isInterventionRequired;
+-(BOOL)isInterventionRequired;
 
-- (SCNetworkReachabilityFlags) reachabilityFlags;
-
-// FOR TESTING
-//-(void)reachabilityChanged:(SCNetworkReachabilityFlags)flags;
+-(TEALNetworkStatus)currentReachabilityStatus;
+-(SCNetworkReachabilityFlags)reachabilityFlags;
+-(NSString*)currentReachabilityString;
+-(NSString*)currentReachabilityFlags;
 
 @end
