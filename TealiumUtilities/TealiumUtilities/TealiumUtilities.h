@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define TEALUtilitiesVersionNumber @"1.1"
+
 @interface TealiumUtilities : NSObject
 
 @end

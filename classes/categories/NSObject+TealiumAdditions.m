@@ -12,7 +12,7 @@
 
 - (NSString *) teal_stringValue {
 
-    if (![self isKindOfClass:[NSString class]]){
+    if (![self isKindOfClass:[NSString class]]) {
         return [NSString stringWithFormat:@"%@", self];
     }
     return [(NSString *)self copy];

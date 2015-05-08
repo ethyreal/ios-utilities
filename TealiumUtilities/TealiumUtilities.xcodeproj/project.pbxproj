@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		E79EA09F1AFD5D9B002D2D4D /* Universal-TealiumUtilities */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = E79EA0A01AFD5D9B002D2D4D /* Build configuration list for PBXAggregateTarget "Universal-TealiumUtilities" */;
+			buildPhases = (
+				E79EA0A31AFD5DA5002D2D4D /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Universal-TealiumUtilities";
+			productName = "Universal-TealiumUtilities";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		E79EA0481AFD522B002D2D4D /* TealiumUtilities.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E79EA0471AFD522B002D2D4D /* TealiumUtilities.h */; };
 		E79EA04A1AFD522C002D2D4D /* TealiumUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = E79EA0491AFD522C002D2D4D /* TealiumUtilities.m */; };
@@ -297,6 +311,9 @@
 					E79EA04E1AFD522C002D2D4D = {
 						CreatedOnToolsVersion = 6.3.1;
 					};
+					E79EA09F1AFD5D9B002D2D4D = {
+						CreatedOnToolsVersion = 6.3.1;
+					};
 				};
 			};
 			buildConfigurationList = E79EA03F1AFD522A002D2D4D /* Build configuration list for PBXProject "TealiumUtilities" */;
@@ -313,6 +330,7 @@
 			targets = (
 				E79EA0431AFD522B002D2D4D /* TealiumUtilities */,
 				E79EA04E1AFD522C002D2D4D /* TealiumUtilitiesTests */,
+				E79EA09F1AFD5D9B002D2D4D /* Universal-TealiumUtilities */,
 			);
 		};
 /* End PBXProject section */
@@ -326,6 +344,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E79EA0A31AFD5DA5002D2D4D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# define output folder environment variable\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n\n# Step 1. Build Device and Simulator versions\nxcodebuild -target TealiumUtilities ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\nxcodebuild -target TealiumUtilities -configuration ${CONFIGURATION} -sdk iphonesimulator -arch i386 BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\n\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# Step 2. Create universal binary file using lipo\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/lib${PRODUCT_NAME}.a\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/lib${PRODUCT_NAME}.a\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/lib${PRODUCT_NAME}.a\"\n\n# Last touch. copy the header files. Just for convenience\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/include\" \"${UNIVERSAL_OUTPUTFOLDER}/\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E79EA0401AFD522B002D2D4D /* Sources */ = {
@@ -510,6 +544,20 @@
 			};
 			name = Release;
 		};
+		E79EA0A11AFD5D9B002D2D4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E79EA0A21AFD5D9B002D2D4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -535,6 +583,14 @@
 			buildConfigurations = (
 				E79EA05C1AFD522C002D2D4D /* Debug */,
 				E79EA05D1AFD522C002D2D4D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		E79EA0A01AFD5D9B002D2D4D /* Build configuration list for PBXAggregateTarget "Universal-TealiumUtilities" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E79EA0A11AFD5D9B002D2D4D /* Debug */,
+				E79EA0A21AFD5D9B002D2D4D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
