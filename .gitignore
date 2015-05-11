@@ -1,5 +1,8 @@
 # Created by https://www.gitignore.io
 
+# Mac
+.DS_Store
+
 ### Swift / Objective-C ###
 # Xcode
 #
