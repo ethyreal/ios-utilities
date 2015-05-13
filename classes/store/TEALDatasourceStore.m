@@ -87,7 +87,7 @@ const char * kTEALDatasoruceStoreQueueName = "com.tealium.datasource-store-queue
     
     id obj = [[NSUserDefaults standardUserDefaults] objectForKey:key];
     
-    if ([obj isKindOfClass:[NSDictionary class]]) {
+    if (obj && [obj isKindOfClass:[NSDictionary class]]) {
         dispatch_barrier_sync(self.queue, ^{
             [self.datasources addEntriesFromDictionary:obj];
             unarchived = YES;

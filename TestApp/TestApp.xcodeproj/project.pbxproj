@@ -42,6 +42,13 @@
 			remoteGlobalIDString = E79EA04F1AFD522C002D2D4D;
 			remoteInfo = TealiumUtilitiesTests;
 		};
+		37570D341B02D3B30017B07E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 372275361AFE6C3C0038DDDD /* TealiumUtilities.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E79EA0431AFD522B002D2D4D;
+			remoteInfo = TealiumUtilities;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -168,6 +175,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				37570D351B02D3B30017B07E /* PBXTargetDependency */,
 			);
 			name = TestApp;
 			productName = TestApp;
@@ -300,6 +308,11 @@
 			isa = PBXTargetDependency;
 			target = 3722750C1AFD7DD00038DDDD /* TestApp */;
 			targetProxy = 372275271AFD7DD00038DDDD /* PBXContainerItemProxy */;
+		};
+		37570D351B02D3B30017B07E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TealiumUtilities;
+			targetProxy = 37570D341B02D3B30017B07E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -490,6 +503,7 @@
 				372275321AFD7DD00038DDDD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		372275331AFD7DD00038DDDD /* Build configuration list for PBXNativeTarget "TestAppTests" */ = {
 			isa = XCConfigurationList;
@@ -498,6 +512,7 @@
 				372275351AFD7DD00038DDDD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
