@@ -3,6 +3,10 @@
 # Mac
 .DS_Store
 
+# Builds
+
+tealiumutilities-builds
+
 ### Swift / Objective-C ###
 # Xcode
 #
