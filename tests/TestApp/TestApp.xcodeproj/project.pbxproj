@@ -131,7 +131,7 @@
 		3722750F1AFD7DD00038DDDD /* TestApp */ = {
 			isa = PBXGroup;
 			children = (
-				372275361AFE6C3C0038DDDD /* TealiumUtilities.xcodeproj */,
+				E7ABF7A91B20C9E100C1C67E /* Library */,
 				372275141AFD7DD00038DDDD /* AppDelegate.h */,
 				372275151AFD7DD00038DDDD /* AppDelegate.m */,
 				372275171AFD7DD00038DDDD /* ViewController.h */,
@@ -170,6 +170,14 @@
 				3722752B1AFD7DD00038DDDD /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E7ABF7A91B20C9E100C1C67E /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				372275361AFE6C3C0038DDDD /* TealiumUtilities.xcodeproj */,
+			);
+			name = Library;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
