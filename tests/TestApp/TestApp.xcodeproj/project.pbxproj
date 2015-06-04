@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3703C4331B1FC5960082B5C6 /* libTealiumUtilities.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3703C42E1B1FC55D0082B5C6 /* libTealiumUtilities.a */; };
 		3703C4351B1FC5D50082B5C6 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3703C4341B1FC5D50082B5C6 /* SystemConfiguration.framework */; };
+		3703C4391B1FD45A0082B5C6 /* libTealiumUtilities.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3703C42E1B1FC55D0082B5C6 /* libTealiumUtilities.a */; };
 		372275131AFD7DD00038DDDD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 372275121AFD7DD00038DDDD /* main.m */; };
 		372275161AFD7DD00038DDDD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 372275151AFD7DD00038DDDD /* AppDelegate.m */; };
 		372275191AFD7DD00038DDDD /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 372275181AFD7DD00038DDDD /* ViewController.m */; };
@@ -36,6 +37,13 @@
 			remoteInfo = TealiumUtilitiesTests;
 		};
 		3703C4311B1FC58F0082B5C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 372275361AFE6C3C0038DDDD /* TealiumUtilities.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E79EA0431AFD522B002D2D4D;
+			remoteInfo = TealiumUtilities;
+		};
+		3703C4371B1FD4550082B5C6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 372275361AFE6C3C0038DDDD /* TealiumUtilities.xcodeproj */;
 			proxyType = 1;
@@ -85,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3703C4391B1FD45A0082B5C6 /* libTealiumUtilities.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +204,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3703C4381B1FD4550082B5C6 /* PBXTargetDependency */,
 				372275281AFD7DD00038DDDD /* PBXTargetDependency */,
 			);
 			name = TestAppTests;
@@ -310,6 +320,11 @@
 			isa = PBXTargetDependency;
 			name = TealiumUtilities;
 			targetProxy = 3703C4311B1FC58F0082B5C6 /* PBXContainerItemProxy */;
+		};
+		3703C4381B1FD4550082B5C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TealiumUtilities;
+			targetProxy = 3703C4371B1FD4550082B5C6 /* PBXContainerItemProxy */;
 		};
 		372275281AFD7DD00038DDDD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
