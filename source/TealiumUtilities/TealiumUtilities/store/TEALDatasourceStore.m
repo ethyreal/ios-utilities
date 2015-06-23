@@ -12,9 +12,9 @@ const char * kTEALDatasoruceStoreQueueName = "com.tealium.datasource-store-queue
 
 @interface TEALDatasourceStore ()
 
-@property (nonatomic, readonly) dispatch_queue_t queue;
+@property (nonatomic, strong) dispatch_queue_t queue;
 
-@property (nonatomic, readonly) NSMutableDictionary *datasources;
+@property (nonatomic, strong) NSMutableDictionary *datasources;
 
 @end
 
@@ -60,7 +60,7 @@ const char * kTEALDatasoruceStoreQueueName = "com.tealium.datasource-store-queue
     return obj;
 }
 
-- (id)objectForKeyedSubscript:(id <NSCopying, NSSecureCoding>)key {
+- (id) objectForKeyedSubscript:(id <NSCopying, NSSecureCoding>)key {
     return [self objectForKey:key];
 }
 
@@ -74,7 +74,7 @@ const char * kTEALDatasoruceStoreQueueName = "com.tealium.datasource-store-queue
     });
 }
 
-- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying, NSSecureCoding>)key {
+- (void) setObject:(id)obj forKeyedSubscript:(id <NSCopying, NSSecureCoding>)key {
     [self setObject:obj
              forKey:key];
 }
